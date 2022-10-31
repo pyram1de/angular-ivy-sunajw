@@ -43,3 +43,7 @@ p {
   vertical-align: middle;
   line-height: 30px;
 }
+
+.dragging {
+  border: 1px dashed white;
+}

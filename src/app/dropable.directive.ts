@@ -4,19 +4,16 @@ import {
   EventEmitter,
   HostBinding,
   HostListener,
-  Input,
   Output,
 } from '@angular/core';
-import { PlayerService } from './player.service';
 
 @Directive({
   selector: '[appDropable]',
 })
 export class Dropable {
-  // @Input() appDropable = 0;
   @Output() dropped: EventEmitter<any> = new EventEmitter<any>();
   protected _elementClass: string[] = [];
-  constructor(public el: ElementRef, private playerService: PlayerService) {}
+  constructor(public el: ElementRef) {}
 
   @HostBinding('class')
   get elementClass(): string {
@@ -35,18 +32,15 @@ export class Dropable {
   @HostListener('dragleave', ['$event'])
   dragleave_handler(event: any) {
     event.preventDefault();
-    console.log('thing', this._elementClass);
     this.set('');
   }
 
   @HostListener('drop', ['$event'])
   drop_handler(event: any) {
     event.preventDefault();
-    //const html = event.dataTransfer.getData('text/html');
-    //const data = parseInt(event.dataTransfer.getData('text/number'), 10);
+    const source = JSON.parse(event.dataTransfer.getData('text/json'));
+    this.dropped.emit(source);
     this.set('');
-    this.dropped.emit(event);
-    //this.playerService.moveAfter(data, this.appDropable);
   }
 
   @HostListener('dragenter', ['$event'])

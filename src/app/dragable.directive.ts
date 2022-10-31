@@ -1,13 +1,22 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { Directive, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
 
 @Directive({
   selector: '[appDraggable]',
 })
 export class Draggable {
   @Input() appDraggable: any = undefined;
+  protected _elementClass: string[] = [];
 
   constructor(private el: ElementRef) {
     this.el.nativeElement.draggable = true;
+  }
+
+  @HostBinding('class')
+  get elementClass(): string {
+    return this._elementClass.join(' ');
+  }
+  set(val: string) {
+    this._elementClass = val.split(' ');
   }
 
   @HostListener('dragstart', ['$event'])
@@ -16,27 +25,14 @@ export class Draggable {
     const html = this.el.nativeElement.innerHTML;
     ev.dataTransfer.setData('text/html', html);
     ev.dataTransfer.dropEffect = 'move';
-    this.addClass(this.el.nativeElement, 'dragging');
+    this.set('dragging');
   }
 
   @HostListener('dragend', ['$event'])
   dragEndHandler(ev: any) {
-    this.removeClass(this.el.nativeElement, 'wdragging');
-    ev.dataTransfer.reset();
+    this.set('');
+    ev.dataTransfer.clearData();
   }
 
-  private hasClass(ele, cls) {
-    return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
-  }
-
-  private addClass(ele, cls) {
-    if (!this.hasClass(ele, cls)) ele.className += ' ' + cls;
-  }
-
-  private removeClass(ele, cls) {
-    if (this.hasClass(ele, cls)) {
-      var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
-      ele.className = ele.className.replace(reg, ' ');
-    }
-  }
+  
 }
