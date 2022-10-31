@@ -1,5 +1,5 @@
 <ng-container *ngFor="let player of players; trackBy: trackByOrder">
-  <div [appDraggable]="player.id" class="box">
+  <div [appDraggable]="player" class="box">
     <div class="text">{{ player.name }}</div>
   </div>
   <div (dropped)="dropped($event, player)" appDropable class="box"></div>
